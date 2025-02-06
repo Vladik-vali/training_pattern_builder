@@ -1,0 +1,127 @@
+
+public class House
+{
+    public string Type { get; set; } // Камень или кирпич
+    public bool HasPool { get; set; }
+    public bool HasGarage { get; set; }
+    public bool HasGarden { get; set; }
+    public bool HasPath { get; set; }
+
+    public override string ToString()
+    {
+        string addons = "";
+        if (HasPool) addons += "Бассейн, ";
+        if (HasGarage) addons += "Гараж, ";
+        if (HasGarden) addons += "Полисадник, ";
+        if (HasPath) addons += "Тропинка, ";
+        if (addons.Length > 2) addons = addons.Substring(0, addons.Length - 2);
+
+        return $"Дом: Тип - {Type}, Доп. постройки - {addons}";
+    }
+}
+
+public interface IHouseBuilder
+{
+    void Reset();
+    void SetType(string type);
+    void SetPool();
+    void SetGarage();
+    void SetGarden();
+    void SetPath();
+    House GetResult();
+}
+
+public class HouseBuilder : IHouseBuilder
+{
+    private House house;
+
+    public HouseBuilder()
+    {
+        house = new House();
+    }
+
+    public void Reset()
+    {
+        house = new House();
+    }
+
+    public void SetType(string type)
+    {
+        house.Type = type;
+    }
+
+    public void SetPool()
+    {
+        house.HasPool = true;
+    }
+
+    public void SetGarage()
+    {
+        house.HasGarage = true;
+    }
+
+    public void SetGarden()
+    {
+        house.HasGarden = true;
+    }
+
+    public void SetPath()
+    {
+        house.HasPath = true;
+    }
+
+    public House GetResult()
+    {
+        return house;
+    }
+}
+
+public class HouseCatalog
+{
+    private List<House> houses = new List<House>();
+
+    public void AddHouse(House house)
+    {
+        houses.Add(house);
+    }
+
+    public void PrintCatalog()
+    {
+        foreach (var house in houses)
+        {
+            Console.WriteLine(house);
+        }
+    }
+}
+
+public class HouseClient
+{
+    public static void Main(string[] args)
+    {
+        HouseCatalog catalog = new HouseCatalog();
+        HouseBuilder builder = new HouseBuilder();
+
+        builder.Reset();
+        builder.SetType("Камень");
+        builder.SetPool();
+        builder.SetGarage();
+        catalog.AddHouse(builder.GetResult());
+
+        builder.Reset();
+        builder.SetType("Кирпич");
+        builder.SetGarden();
+        builder.SetPath();
+        catalog.AddHouse(builder.GetResult());
+
+        builder.Reset();
+        builder.SetType("Камень");
+        builder.SetPool();
+        builder.SetGarage();
+        builder.SetGarden();
+        builder.SetPath();
+        catalog.AddHouse(builder.GetResult());
+
+        Console.WriteLine("Каталог домов:");
+        catalog.PrintCatalog();
+    }
+}
