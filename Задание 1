@@ -1,0 +1,163 @@
+// Абстрактный строитель
+public interface IBuilder
+{
+    void Reset();
+    void SetSeats(int number);
+    void SetEngine(string engine);
+    void SetTripComputer();
+    void SetGPS();
+}
+
+// Конкретный строитель для автомобиля
+public class CarBuilder : IBuilder
+{
+    private Car car;
+
+    public CarBuilder()
+    {
+        car = new Car();
+    }
+
+    public void Reset()
+    {
+        car = new Car();
+    }
+
+    public void SetSeats(int number)
+    {
+        car.Seats = number;
+    }
+
+    public void SetEngine(string engine)
+    {
+        car.Engine = engine;
+    }
+
+    public void SetTripComputer()
+    {
+        car.HasTripComputer = true;
+    }
+
+    public void SetGPS()
+    {
+        car.HasGPS = true;
+    }
+
+    public Car GetResult()
+    {
+        return car;
+    }
+}
+
+// Конкретный строитель для инструкции автомобиля
+public class CarManualBuilder : IBuilder
+{
+    private Manual manual;
+
+    public CarManualBuilder()
+    {
+        manual = new Manual();
+    }
+
+    public void Reset()
+    {
+        manual = new Manual();
+    }
+
+    public void SetSeats(int number)
+    {
+        manual.SeatsInfo = $"Количество сидений: {number}";
+    }
+
+    public void SetEngine(string engine)
+    {
+        manual.EngineInfo = $"Тип двигателя: {engine}";
+    }
+
+    public void SetTripComputer()
+    {
+        manual.TripComputerInfo = "Инструкция к бортовому компьютеру добавлена.";
+    }
+
+    public void SetGPS()
+    {
+        manual.GPSInfo = "Инструкция к GPS добавлена.";
+    }
+
+    public Manual GetResult()
+    {
+        return manual;
+    }
+}
+
+// Продукт (автомобиль)
+public class Car
+{
+    public int Seats { get; set; }
+    public string Engine { get; set; }
+    public bool HasTripComputer { get; set; }
+    public bool HasGPS { get; set; }
+
+    public override string ToString()
+    {
+        return $"Автомобиль: Сидений - {Seats}, Двигатель - {Engine}, Бортовой компьютер - {HasTripComputer}, GPS - {HasGPS}";
+    }
+}
+
+// Продукт (инструкция)
+public class Manual
+{
+    public string SeatsInfo { get; set; }
+    public string EngineInfo { get; set; }
+    public string TripComputerInfo { get; set; }
+    public string GPSInfo { get; set; }
+
+    public override string ToString()
+    {
+        return $"Инструкция: {SeatsInfo}, {EngineInfo}, {TripComputerInfo}, {GPSInfo}";
+    }
+}
+
+
+// Директор
+public class Director
+{
+    public void MakeSUV(IBuilder builder)
+    {
+        builder.Reset();
+        builder.SetSeats(4);
+        builder.SetEngine("Дизельный");
+        builder.SetTripComputer();
+        builder.SetGPS();
+    }
+
+    public void MakeSportsCar(IBuilder builder)
+    {
+        builder.Reset();
+        builder.SetSeats(2);
+        builder.SetEngine("Спортивный");
+        builder.SetTripComputer();
+        builder.SetGPS();
+    }
+}
+
+// Клиентский код
+public class Client
+{
+    public static void Main(string[] args)
+    {
+        Director director = new Director();
+
+        // Строим автомобиль
+        CarBuilder carBuilder = new CarBuilder();
+        director.MakeSportsCar(carBuilder);
+        Car car = carBuilder.GetResult();
+        Console.WriteLine(car);
+
+        // Строим инструкцию
+        CarManualBuilder manualBuilder = new CarManualBuilder();
+        director.MakeSUV(manualBuilder);
+        Manual manual = manualBuilder.GetResult();
+        Console.WriteLine(manual);
+    }
+}
